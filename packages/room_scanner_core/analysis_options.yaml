@@ -1,0 +1,10 @@
+include: package:lints/recommended.yaml
+
+analyzer:
+  exclude:
+    - lib/**/*.g.dart
+
+linter:
+  rules:
+    - prefer_single_quotes
+    - unawaited_futures

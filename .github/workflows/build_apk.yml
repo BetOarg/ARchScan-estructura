@@ -1,0 +1,141 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  TEST_SIGNING_SHA256: "44:94:E0:FA:A0:61:A0:CF:6D:3A:5B:91:72:8F:C1:1F:14:4D:A8:27:8E:94:C9:57:74:58:8D:A9:FC:50:9F:30"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Clave pública exclusiva para APK de prueba.
+      # No utilizar esta firma para una publicación en Play Store.
+      - name: Install fixed Android test signing key
+        shell: bash
+        run: |
+          mkdir -p ~/.android
+          base64 --decode \
+            .github/signing/room-scanner-test.keystore.b64 \
+            > ~/.android/debug.keystore
+
+          keytool -list \
+            -keystore ~/.android/debug.keystore \
+            -storepass android \
+            -alias androiddebugkey
+
+          ACTUAL_SHA256="$(
+            keytool -list -v \
+              -keystore ~/.android/debug.keystore \
+              -storepass android \
+              -alias androiddebugkey 2>/dev/null \
+              | sed -n 's/^[[:space:]]*SHA256: //p'
+          )"
+
+          if [[ "$ACTUAL_SHA256" != "$TEST_SIGNING_SHA256" ]]; then
+            echo "La firma fija de pruebas no coincide con la huella autorizada."
+            echo "Esperada: $TEST_SIGNING_SHA256"
+            echo "Recibida: ${ACTUAL_SHA256:-no disponible}"
+            exit 1
+          fi
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.0"
+          channel: stable
+          cache: true
+
+      - name: Generate Isar database models (room_scanner_core)
+        run: |
+          dart pub get
+          dart run build_runner build --delete-conflicting-outputs
+        working-directory: packages/room_scanner_core
+
+      - name: Install dependencies and generate localizations
+        working-directory: packages/room_scanner_app
+        run: |
+          flutter pub get
+          flutter gen-l10n
+
+      - name: Build versioned APK
+        working-directory: packages/room_scanner_app
+        run: |
+          # Monotónico, único por ejecución y reintento. Evita APK con un
+          # versionCode repetido o menor que el ya instalado.
+          VERSION_CODE=$((
+            270000000 +
+            ${{ github.run_number }} * 100 +
+            ${{ github.run_attempt }}
+          ))
+          APP_VERSION="$(
+            sed -n 's/^version:[[:space:]]*\([^+]*\)+.*$/\1/p' pubspec.yaml
+          )"
+
+          if [[ -z "$APP_VERSION" ]]; then
+            echo "No se pudo leer la versión desde pubspec.yaml."
+            exit 1
+          fi
+
+          flutter build apk \
+            --debug \
+            --android-skip-build-dependency-validation \
+            --build-name="$APP_VERSION" \
+            --build-number="$VERSION_CODE"
+
+          cp build/app/outputs/flutter-apk/app-debug.apk \
+            "build/app/outputs/flutter-apk/room-scanner-build-${{ github.run_number }}.apk"
+
+          APK_PATH="build/app/outputs/flutter-apk/room-scanner-build-${{ github.run_number }}.apk"
+          APK_SIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
+
+          echo "ARchScan versionName: $APP_VERSION"
+          echo "Android versionCode: $VERSION_CODE"
+          APK_CERTIFICATE="$($APK_SIGNER verify --print-certs "$APK_PATH")"
+          echo "$APK_CERTIFICATE"
+          EXPECTED_COMPACT="$(
+            tr -d ':' <<< "$TEST_SIGNING_SHA256" | tr '[:upper:]' '[:lower:]'
+          )"
+
+          if ! grep -Fqi "$EXPECTED_COMPACT" <<< "$APK_CERTIFICATE"; then
+            echo "El APK final no conserva la firma fija de pruebas."
+            exit 1
+          fi
+
+          REPORT_DIR="build/apk-audit"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -n 1)"
+          mkdir -p "$REPORT_DIR"
+
+          sha256sum "$APK_PATH" | tee "$REPORT_DIR/SHA256SUMS.txt"
+          "$AAPT" dump badging "$APK_PATH"             | tee "$REPORT_DIR/package-version-sdk.txt"
+          "$AAPT" dump permissions "$APK_PATH"             | tee "$REPORT_DIR/permissions.txt"
+          printf '%s\n' "$APK_CERTIFICATE"             > "$REPORT_DIR/signing-certificate.txt"
+
+          grep -Fq "package: name='com.bet0.ARchScan'"             "$REPORT_DIR/package-version-sdk.txt" || {
+              echo "El APK no usa el Application ID esperado."
+              exit 1
+            }
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: archscan-apk-pruebas-${{ github.run_number }}
+          path: |
+            packages/room_scanner_app/build/app/outputs/flutter-apk/room-scanner-build-${{ github.run_number }}.apk
+            packages/room_scanner_app/build/apk-audit
+          if-no-files-found: error
+          retention-days: 14

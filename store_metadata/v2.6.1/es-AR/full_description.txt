@@ -1,0 +1,17 @@
+ARchScan permite relevar espacios interiores y exteriores desde un dispositivo móvil. Según las capacidades disponibles, utiliza realidad aumentada, cámara convencional o un modo manual seguro.
+
+Medí paredes, puertas y ventanas; conectá ambientes; organizá el plano general y conservá proyectos para continuar el trabajo más adelante. Editá medidas, trabajá en sistema métrico o imperial e identificá paredes compartidas.
+
+Importá y exportá proyectos en JSON y generá documentación técnica en PDF con planos, cotas, superficies y perímetros.
+
+Funciones principales:
+• Selección automática entre escaneo AR, cámara convencional y modo manual.
+• Medición y edición de ambientes, paredes, puertas y ventanas.
+• Plano 2D con cotas y organización de habitaciones.
+• Proyectos locales y sincronización opcional con cuenta.
+• Recuperación y compatibilidad con proyectos históricos.
+• Exportación JSON y documentación PDF.
+• Interfaz en español e inglés.
+• Unidades métricas e imperiales.
+
+ARchScan es una herramienta de relevamiento. Verificá las medidas antes de utilizarlas en documentación constructiva, presupuestos o decisiones profesionales.

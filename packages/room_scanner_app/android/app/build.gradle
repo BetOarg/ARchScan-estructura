@@ -1,0 +1,178 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+// Carga segura de variables desde local.properties o valores por defecto
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode =
+        localProperties.getProperty('flutter.versionCode') ?: '1'
+
+def flutterVersionName =
+        localProperties.getProperty('flutter.versionName') ?: '1.0'
+
+// Firma de release
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+def hasReleaseKeystore = keystorePropertiesFile.exists()
+
+if (hasReleaseKeystore) {
+    keystorePropertiesFile.withReader('UTF-8') { reader ->
+        keystoreProperties.load(reader)
+    }
+}
+
+android {
+    namespace "com.bet0.ARchScan"
+
+    compileSdkVersion 36
+    ndkVersion "28.2.13676358"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    defaultConfig {
+        applicationId "com.bet0.ARchScan"
+
+        minSdkVersion 28
+
+        targetSdkVersion 36
+
+        versionCode flutterVersionCode.toInteger()
+
+        versionName flutterVersionName
+    }
+
+    signingConfigs {
+        // Clave de pruebas ya pública en el repositorio. Nunca usar en release.
+        // La ruta explícita evita depender del debug.keystore del runner.
+        debug {
+            def testKeySource = rootProject.file(
+                    '../../../.github/signing/room-scanner-test.keystore.b64')
+            if (!testKeySource.isFile()) {
+                throw new GradleException('Falta la clave fija de pruebas.')
+            }
+            def testKeyFile = rootProject.file(
+                    '.gradle/archscan-signing/debug.keystore')
+            def testKeyBytes = java.util.Base64.getMimeDecoder().decode(
+                    testKeySource.getText('UTF-8'))
+            if (!testKeyFile.isFile() ||
+                    !java.util.Arrays.equals(testKeyFile.bytes, testKeyBytes)) {
+                testKeyFile.parentFile.mkdirs()
+                testKeyFile.bytes = testKeyBytes
+            }
+
+            storeFile testKeyFile
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        if (hasReleaseKeystore) {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+
+                storeFile keystoreProperties['storeFile']
+                        ? file(keystoreProperties['storeFile'])
+                        : null
+
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            // Una compilación sin key.properties queda deliberadamente sin
+            // firma. Nunca se reutiliza la clave de depuración para publicar.
+            if (hasReleaseKeystore) {
+                signingConfig signingConfigs.release
+            }
+
+            minifyEnabled false
+
+            shrinkResources false
+        }
+    }
+}
+
+tasks.register("verifyProductionSigning") {
+    group = "verification"
+    description = "Verifica la configuración de la clave de carga de producción."
+
+    doLast {
+        if (!hasReleaseKeystore) {
+            throw new GradleException(
+                    "Falta android/key.properties para la firma de producción.")
+        }
+
+        def requiredKeys = [
+                'storeFile',
+                'storePassword',
+                'keyAlias',
+                'keyPassword',
+        ]
+
+        def missingKeys = requiredKeys.findAll {
+            !keystoreProperties[it]?.trim()
+        }
+
+        if (!missingKeys.isEmpty()) {
+            throw new GradleException(
+                    "Faltan propiedades de firma: ${missingKeys.join(', ')}")
+        }
+
+        def releaseStore = file(keystoreProperties['storeFile'])
+
+        if (!releaseStore.exists()) {
+            throw new GradleException(
+                    "No existe el keystore indicado: ${releaseStore}")
+        }
+
+        println "Configuración de firma de producción verificada."
+    }
+}
+
+flutter {
+    source '../../'
+}
+
+dependencies {
+
+    // ================================================================
+    // ANDROIDX
+    // ================================================================
+
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+
+    // ================================================================
+    // GOOGLE ARCORE
+    // ================================================================
+    //
+    // Se utiliza para detectar correctamente si el dispositivo
+    // Android soporta ARCore mediante ArCoreApk.
+    //
+    // IMPORTANTE:
+    // Esta dependencia no obliga a que el dispositivo tenga ARCore.
+    // Permite consultar su disponibilidad en tiempo de ejecución.
+    //
+    implementation 'com.google.ar:core:1.54.0'
+}

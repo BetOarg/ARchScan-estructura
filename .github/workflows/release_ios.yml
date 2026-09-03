@@ -1,0 +1,279 @@
+name: ARchScan - iOS Store Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload_to_app_store_connect:
+        description: "Upload the validated IPA to App Store Connect/TestFlight"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: "3.47.0"
+  IOS_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
+  IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+  IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+  APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+  APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+  APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+  APP_STORE_CONNECT_PRIVATE_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY_BASE64 }}
+
+jobs:
+  build-ios-store:
+    name: Signed iOS IPA
+    runs-on: macos-26
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          missing=0
+          for variable in             IOS_DISTRIBUTION_CERTIFICATE_BASE64             IOS_CERTIFICATE_PASSWORD             IOS_PROVISIONING_PROFILE_BASE64             APPLE_TEAM_ID; do
+            if [ -z "${!variable}" ]; then
+              echo "::error::Falta el secret $variable"
+              missing=1
+            fi
+          done
+          if [ "${{ inputs.upload_to_app_store_connect }}" = "true" ]; then
+            for variable in \
+              APP_STORE_CONNECT_API_KEY_ID \
+              APP_STORE_CONNECT_ISSUER_ID \
+              APP_STORE_CONNECT_PRIVATE_KEY_BASE64; do
+              if [ -z "${!variable}" ]; then
+                echo "::error::Falta el secret $variable para subir a App Store Connect"
+                missing=1
+              fi
+            done
+          fi
+          exit "$missing"
+
+      - name: Verify App Store Xcode requirement
+        shell: bash
+        run: |
+          xcodebuild -version
+          xcode_major="$(xcodebuild -version | awk 'NR == 1 { split($2, version, "."); print version[1] }')"
+          if [ "$xcode_major" -lt 26 ]; then
+            echo "::error::App Store Connect requiere Xcode 26 o posterior"
+            exit 1
+          fi
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Generate core models
+        working-directory: packages/room_scanner_core
+        run: |
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: Install Apple certificate and provisioning profile
+        working-directory: packages/room_scanner_app
+        shell: bash
+        run: |
+          keychain_password="$(openssl rand -hex 24)"
+          certificate_path="$RUNNER_TEMP/archscan-distribution.p12"
+          profile_path="$RUNNER_TEMP/archscan.mobileprovision"
+          keychain_path="$RUNNER_TEMP/archscan-signing.keychain-db"
+
+          printf '%s' "$IOS_DISTRIBUTION_CERTIFICATE_BASE64"             | base64 --decode > "$certificate_path"
+          printf '%s' "$IOS_PROVISIONING_PROFILE_BASE64"             | base64 --decode > "$profile_path"
+
+          security create-keychain -p "$keychain_password" "$keychain_path"
+          security set-keychain-settings -lut 21600 "$keychain_path"
+          security unlock-keychain -p "$keychain_password" "$keychain_path"
+          security import "$certificate_path"             -P "$IOS_CERTIFICATE_PASSWORD"             -A -t cert -f pkcs12 -k "$keychain_path"
+          security list-keychain -d user -s "$keychain_path"
+          security set-key-partition-list             -S apple-tool:,apple:             -k "$keychain_password" "$keychain_path"
+
+          security cms -D -i "$profile_path" > "$RUNNER_TEMP/profile.plist"
+          profile_uuid=$(/usr/libexec/PlistBuddy             -c "Print :UUID" "$RUNNER_TEMP/profile.plist")
+          profile_name=$(/usr/libexec/PlistBuddy             -c "Print :Name" "$RUNNER_TEMP/profile.plist")
+
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$profile_path"             "$HOME/Library/MobileDevice/Provisioning Profiles/$profile_uuid.mobileprovision"
+
+          export ARCHSCAN_PROFILE_NAME="$profile_name"
+          perl -0pi -e             's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;\n\t\t\t\tDEVELOPMENT_TEAM = $ENV{APPLE_TEAM_ID};\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = "$ENV{ARCHSCAN_PROFILE_NAME}";/g'             ios/Runner.xcodeproj/project.pbxproj
+
+          cat > ios/ExportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>teamID</key>
+            <string>$APPLE_TEAM_ID</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.bet0.ARchScan</key>
+              <string>$profile_name</string>
+            </dict>
+            <key>uploadSymbols</key>
+            <true/>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Validate store readiness
+        working-directory: packages/room_scanner_app
+        run: |
+          dart run tool/verify_store_readiness.dart --strict
+          dart run tool/security_audit.dart
+
+      - name: Build signed IPA
+        working-directory: packages/room_scanner_app
+        run: |
+          flutter pub get
+          flutter gen-l10n
+          flutter build ipa --release             --export-options-plist=ios/ExportOptions.plist
+
+      - name: Audit signed IPA
+        working-directory: packages/room_scanner_app
+        shell: bash
+        run: |
+          IPA_PATH="$(find build/ios/ipa -maxdepth 1 -name '*.ipa' -type f | head -n 1)"
+          test -n "$IPA_PATH" || { echo "::error::No se generó el IPA"; exit 1; }
+
+          REPORT_DIR="build/ios/ipa-audit"
+          EXTRACT_DIR="$RUNNER_TEMP/archscan-ipa"
+          mkdir -p "$REPORT_DIR" "$EXTRACT_DIR"
+          ditto -x -k "$IPA_PATH" "$EXTRACT_DIR"
+
+          APP_PATH="$(find "$EXTRACT_DIR/Payload" -maxdepth 1 -name '*.app' -type d | head -n 1)"
+          test -n "$APP_PATH" || { echo "::error::El IPA no contiene una app"; exit 1; }
+
+          shasum -a 256 "$IPA_PATH" | tee "$REPORT_DIR/SHA256SUMS.txt"
+          plutil -p "$APP_PATH/Info.plist" | tee "$REPORT_DIR/Info.plist.txt"
+          codesign -dvvv "$APP_PATH" 2>&1 | tee "$REPORT_DIR/codesign.txt"
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH" \
+            2>&1 | tee "$REPORT_DIR/codesign-verification.txt"
+          security cms -D -i "$APP_PATH/embedded.mobileprovision" \
+            > "$REPORT_DIR/embedded-profile.plist"
+          plutil -p "$REPORT_DIR/embedded-profile.plist" \
+            > "$REPORT_DIR/embedded-profile.txt"
+
+          test -f "$APP_PATH/PrivacyInfo.xcprivacy" || {
+            echo "::error::El IPA no incluye PrivacyInfo.xcprivacy"
+            exit 1
+          }
+          cp "$APP_PATH/PrivacyInfo.xcprivacy" "$REPORT_DIR/PrivacyInfo.xcprivacy"
+          plutil -lint "$REPORT_DIR/PrivacyInfo.xcprivacy"
+
+          codesign -d --entitlements :- "$APP_PATH" \
+            > "$REPORT_DIR/app-entitlements.plist" \
+            2> "$REPORT_DIR/app-entitlements.log"
+          plutil -lint "$REPORT_DIR/app-entitlements.plist"
+
+          python3 - \
+            "$REPORT_DIR/embedded-profile.plist" \
+            "$REPORT_DIR/app-entitlements.plist" \
+            "$APPLE_TEAM_ID" <<'PY'
+          import datetime
+          import plistlib
+          import sys
+
+          profile_path, entitlements_path, expected_team = sys.argv[1:]
+          expected_bundle = "com.bet0.ARchScan"
+          expected_application_id = f"{expected_team}.{expected_bundle}"
+
+          with open(profile_path, "rb") as handle:
+              profile = plistlib.load(handle)
+          with open(entitlements_path, "rb") as handle:
+              signed_entitlements = plistlib.load(handle)
+
+          profile_entitlements = profile.get("Entitlements", {})
+          expiration = profile.get("ExpirationDate")
+          if not isinstance(expiration, datetime.datetime):
+              raise SystemExit("El perfil no contiene una fecha de vencimiento válida")
+          now = datetime.datetime.now(datetime.timezone.utc)
+          if expiration.tzinfo is None:
+              expiration = expiration.replace(tzinfo=datetime.timezone.utc)
+          if expiration <= now:
+              raise SystemExit(f"El perfil de distribución está vencido: {expiration.isoformat()}")
+
+          if profile_entitlements.get("get-task-allow", False):
+              raise SystemExit("El perfil permite depuración (get-task-allow=true)")
+          if signed_entitlements.get("get-task-allow", False):
+              raise SystemExit("La app firmada permite depuración (get-task-allow=true)")
+          if profile.get("ProvisionsAllDevices", False):
+              raise SystemExit("El perfil es empresarial, no App Store Connect")
+          if profile_entitlements.get("application-identifier") != expected_application_id:
+              raise SystemExit("El application-identifier del perfil no coincide")
+          if signed_entitlements.get("application-identifier") != expected_application_id:
+              raise SystemExit("El application-identifier de la app firmada no coincide")
+          if profile_entitlements.get("com.apple.developer.team-identifier") != expected_team:
+              raise SystemExit("El Team ID del perfil no coincide")
+          if signed_entitlements.get("com.apple.developer.team-identifier") != expected_team:
+              raise SystemExit("El Team ID de la app firmada no coincide")
+          if profile.get("TeamIdentifier", [None])[0] != expected_team:
+              raise SystemExit("El TeamIdentifier superior del perfil no coincide")
+
+          print(f"Perfil válido hasta: {expiration.isoformat()}")
+          print(f"Application identifier: {expected_application_id}")
+          print("Depuración de distribución: desactivada")
+          PY
+
+          BUNDLE_ID=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP_PATH/Info.plist")
+          VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP_PATH/Info.plist")
+          BUILD=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP_PATH/Info.plist")
+          test "$BUNDLE_ID" = "com.bet0.ARchScan" || {
+            echo "::error::Bundle ID inesperado: $BUNDLE_ID"
+            exit 1
+          }
+          printf 'Bundle ID: %s\nVersion: %s\nBuild: %s\n' \
+            "$BUNDLE_ID" "$VERSION" "$BUILD" \
+            | tee "$REPORT_DIR/build-metadata.txt"
+
+      - name: Upload validated IPA to App Store Connect
+        if: ${{ inputs.upload_to_app_store_connect }}
+        working-directory: packages/room_scanner_app
+        shell: bash
+        run: |
+          IPA_PATH="$(find build/ios/ipa -maxdepth 1 -name '*.ipa' -type f | head -n 1)"
+          test -n "$IPA_PATH" || { echo "::error::No se encontró el IPA validado"; exit 1; }
+
+          PRIVATE_KEYS_DIR="$HOME/.appstoreconnect/private_keys"
+          PRIVATE_KEY_PATH="$PRIVATE_KEYS_DIR/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          mkdir -p "$PRIVATE_KEYS_DIR"
+          printf '%s' "$APP_STORE_CONNECT_PRIVATE_KEY_BASE64" \
+            | base64 --decode > "$PRIVATE_KEY_PATH"
+          chmod 600 "$PRIVATE_KEY_PATH"
+
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$IPA_PATH" \
+            --apiKey "$APP_STORE_CONNECT_API_KEY_ID" \
+            --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID"
+
+      - name: Upload signed IPA and audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: archscan-ios-store-${{ github.run_number }}
+          path: |
+            packages/room_scanner_app/build/ios/ipa/*.ipa
+            packages/room_scanner_app/build/ios/ipa-audit
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Remove temporary credentials
+        if: always()
+        working-directory: packages/room_scanner_app
+        shell: bash
+        run: |
+          rm -f ios/ExportOptions.plist
+          rm -f "$HOME/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          security delete-keychain "$RUNNER_TEMP/archscan-signing.keychain-db" || true

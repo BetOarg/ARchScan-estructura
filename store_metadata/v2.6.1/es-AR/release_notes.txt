@@ -1,0 +1,1 @@
+Preparación para publicación, selección automática del escáner, mejoras de estabilidad, localización y documentación técnica.

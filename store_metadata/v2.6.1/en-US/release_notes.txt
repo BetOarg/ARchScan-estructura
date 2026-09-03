@@ -1,0 +1,1 @@
+Publication preparation, automatic scanner selection, stability improvements, localization, and technical documentation.

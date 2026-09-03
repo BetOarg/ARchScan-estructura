@@ -1,0 +1,527 @@
+{
+  "undoScanEdit": "Undo last action",
+  "redoScanEdit": "Redo last action",
+  "placeOpeningByTouch": "Place opening on the plan",
+  "touchOpeningInstructions": "Tap a wall and slide the opening into position. You can also choose the closing wall. Adjust the width and confirm.",
+  "deleteOpening": "Delete opening",
+  "deleteOpeningConfirmation": "This opening will be removed. If it connects two rooms, the connection will be removed without deleting the rooms.",
+  "@@locale": "en",
+  "appTitle": "ARchScan",
+  "newRoom": "New room",
+  "roomName": "Room name",
+  "roomDestination": "Purpose or name",
+  "cancel": "Cancel",
+  "save": "Save",
+  "wall": "Wall",
+  "door": "Door",
+  "window": "Window",
+  "roomTypeLiving": "Living room",
+  "roomTypeKitchen": "Kitchen",
+  "roomTypeBathroom": "Bathroom",
+  "roomTypeBedroom": "Bedroom",
+  "roomTypeLaundry": "Laundry room",
+  "roomTypeHallway": "Hallway",
+  "roomTypeDiningRoom": "Dining room",
+  "roomTypeDailyDiningRoom": "Breakfast room",
+  "roomTypePatio": "Patio",
+  "roomTypeHall": "Hall",
+  "roomTypeBalcony": "Balcony",
+  "roomTypeTerrace": "Terrace",
+  "roomTypeGarage": "Garage",
+  "roomTypePlayroom": "Playroom",
+  "roomTypeOther": "Other space",
+  "roomType": "Room type",
+  "viewPlan": "View floor plan",
+  "editRoomName": "Edit room name",
+  "roomNameExample": "Example: Ana's bedroom",
+  "whatIsSpaceName": "What is this space called?",
+  "roomSuggestionOffice": "Office",
+  "roomSuggestionStorage": "Storage",
+  "spaceSaved": "Space saved",
+  "whatWouldYouLikeToDo": "What would you like to do now? To continue from another space, select a door or window on the floor plan.",
+  "addAnotherSpace": "Add another space",
+  "viewFullPlan": "View full floor plan",
+  "chooseOpeningToContinue": "Choose a door or window to continue",
+  "noAvailableOpenings": "There are no available openings.",
+  "openingAlreadyConnected": "This opening already connects two spaces.",
+  "unfinishedScan": "Unfinished scan",
+  "unfinishedScanFound": "We found a scan that was not completed.",
+  "continueScan": "Continue scanning",
+  "discardScan": "Discard",
+  "markStartRecommendation": "Mark the starting point",
+  "addNextCornerRecommendation": "Add the next corner",
+  "closeSpaceRecommendation": "You can now close the space",
+  "calculating": "CALCULATING...",
+  "markStart": "MARK START",
+  "measureNextCorner": "MEASURE NEXT CORNER",
+  "placeDoor": "PLACE DOOR",
+  "placeWindow": "PLACE WINDOW",
+  "addCorner": "ADD CORNER",
+  "markSecondEnd": "MARK SECOND END",
+  "measureDoor": "MEASURE DOOR",
+  "measureWindow": "MEASURE WINDOW",
+  "preparingCamera": "Preparing camera...",
+  "basicScanner": "Basic scanner",
+  "cameraStartFailed": "The camera could not be started",
+  "unknownError": "Unknown error.",
+  "retryCamera": "Retry camera",
+  "cameraPermissionRequired": "Camera permission is required to use the Basic scanner.",
+  "cameraUnavailable": "The device does not have an available camera.",
+  "cameraTimeoutMessage": "The camera took too long to respond. You can try starting it again.",
+  "closeRoom": "Close room",
+  "diagonalClosureDetectedTitle": "Diagonal closure detected",
+  "diagonalClosureDetectedMessage": "Closing directly would create a diagonal. The application can add the missing orthogonal corner and close against the first real corner of the room.",
+  "addCornerAndClose": "Add corner and close",
+  "smartCloseMessage": "The measurement ends {distance} meters from the starting point. Do you want to adjust the closure exactly to the starting point?",
+  "@smartCloseMessage": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "continueMeasuring": "Continue measuring",
+  "cameraResumeFailed": "The camera could not be resumed: {error}",
+  "@cameraResumeFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "continuationFromOpening": "Continuation from an opening",
+  "continuationFirstCornerInstruction": "From the green point, measure the distance to the first actual corner of the room.",
+  "markRoomStartingPoint": "Mark the room's starting point.",
+  "measureNextCornerInstruction": "Measure the distance to the next corner and choose its direction.",
+  "traceStarted": "Drawing started",
+  "cornerRegistered": "Corner {count} registered",
+  "@cornerRegistered": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "needThreeCornersToClose": "You need at least 3 corners to close the room.",
+  "canContinueOrClose": "You can continue adding corners or close the room.",
+  "lastCornerRemoved": "Last corner removed.",
+  "measureFirstCorner": "Measure first corner",
+  "measureFirstCornerBeforeFeatures": "First, measure the first actual corner of the room.",
+  "couldNotAddStart": "The starting point could not be added.",
+  "startMarked": "Starting point marked. Now measure the first wall.",
+  "couldNotCalculateCorner": "The new corner could not be calculated.",
+  "invalidCorner": "The corner is not valid.",
+  "firstCornerRegistered": "First corner registered. Continue measuring the room's walls.",
+  "measurementRegistrationFailed": "The measurement could not be registered: {error}",
+  "@measurementRegistrationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotCalculateLocation": "The location could not be calculated.",
+  "enterOpeningWidth": "Enter the opening width.",
+  "couldNotAttachOpening": "The opening could not be attached to a wall.",
+  "doorAdjustedToWall": "Door measuring {width} meters adjusted to the wall.",
+  "@doorAdjustedToWall": {
+    "placeholders": {
+      "width": {
+        "type": "String"
+      }
+    }
+  },
+  "windowAdjustedToWall": "Window measuring {width} meters adjusted to the wall.",
+  "@windowAdjustedToWall": {
+    "placeholders": {
+      "width": {
+        "type": "String"
+      }
+    }
+  },
+  "locationRegistrationFailed": "The location could not be registered: {error}",
+  "@locationRegistrationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "openingWallQuestion": "Which wall contains the opening?",
+  "openingWallExplanation": "Choose the closing wall if the door or window is on the segment that joins the last corner to the first.",
+  "detectWallAutomatically": "Detect wall automatically",
+  "useClosingWall": "Use closing wall",
+  "placeElement": "Place element",
+  "measureCorner": "Measure corner",
+  "featureDistanceInstruction": "Enter the distance from the last position to the door or window.",
+  "cornerDistanceInstruction": "Enter the distance from the last corner to the new corner.",
+  "manualFirstWallInstruction": "This device does not support ARCore. Manually enter the distance from the starting corner to the new one.",
+  "manualNextWallInstruction": "This device does not support ARCore. Manually enter the distance from the previous corner to the new one.",
+  "distance": "Distance",
+  "distanceExample": "Example: 3.50",
+  "meters": "meters",
+  "enterPositiveDistance": "Enter a distance greater than 0",
+  "direction": "Direction",
+  "directionExample": "Example: 90",
+  "degrees": "degrees",
+  "enterValidDirection": "Enter a valid direction",
+  "doorWidth": "Door width",
+  "windowWidth": "Window width",
+  "widthExample": "Example: 1.20",
+  "enterMinimumOpeningWidth": "Enter a minimum width of 0.20 meters",
+  "quickDirection": "Quick direction:",
+  "front": "Front",
+  "right": "Right",
+  "back": "Back",
+  "left": "Left",
+  "featureDoesNotCreateCorner": "This does not create a new room corner.",
+  "positionValidatedBeforeAdding": "The new position is validated before it is added to the floor plan.",
+  "useMeasurement": "Use measurement",
+  "measurementSystem": "Measurement system",
+  "metricSystem": "Meters",
+  "imperialSystem": "Feet and inches",
+  "feet": "Feet",
+  "inches": "Inches",
+  "squareMeters": "square meters",
+  "squareFeet": "square feet",
+  "changeDoorHingeSide": "Change hinge side",
+  "changeDoorOpeningDirection": "Change opening direction",
+  "chooseDoorOpeningDirection": "Choose door opening direction",
+  "doorOpensInterior": "Open toward the interior",
+  "doorOpensExterior": "Open toward the exterior",
+  "editOpeningDimensions": "Edit measurements and position",
+  "openingWidth": "Opening width",
+  "distanceFromWallStart": "Distance from the starting wall corner",
+  "wallLength": "Wall length",
+  "invalidOpeningMeasurement": "Enter valid measurements for the width and position.",
+  "openingUpdated": "Opening updated successfully.",
+  "openingHeight": "Opening height",
+  "sillHeight": "Height above floor",
+  "horizontalOrientation": "Horizontal",
+  "verticalOrientation": "Vertical",
+  "doorPlanDimensions": "{width} wide · {height} high",
+  "@doorPlanDimensions": {
+    "placeholders": {
+      "width": {
+        "type": "String"
+      },
+      "height": {
+        "type": "String"
+      }
+    }
+  },
+  "windowPlanDimensions": "{width} wide · {height} high\n{sill} above floor · {orientation}",
+  "@windowPlanDimensions": {
+    "placeholders": {
+      "width": {
+        "type": "String"
+      },
+      "height": {
+        "type": "String"
+      },
+      "sill": {
+        "type": "String"
+      },
+      "orientation": {
+        "type": "String"
+      }
+    }
+  },
+  "noRoomsToEdit": "There are no rooms to edit.",
+  "transformRoomsTitle": "Move and rotate rooms",
+  "touchTransformRooms": "Move rooms with gestures",
+  "touchTransformExplanation": "Tap a room, drag with one finger, and rotate with two. When released, a nearby opening will snap into place.",
+  "connectedGroupTransformHint": "If the room is connected through an opening, the entire group will move or rotate as a single unit.",
+  "selectedRoom": "Selected room",
+  "movementDistance": "Distance of each movement",
+  "fiveCentimeters": "5 centimeters",
+  "tenCentimeters": "10 centimeters",
+  "twentyFiveCentimeters": "25 centimeters",
+  "fiftyCentimeters": "50 centimeters",
+  "oneInch": "1 inch",
+  "threeInches": "3 inches",
+  "sixInches": "6 inches",
+  "oneFoot": "1 foot",
+  "movement": "Movement",
+  "moveUp": "Move up",
+  "moveDown": "Move down",
+  "moveLeft": "Move left",
+  "moveRight": "Move right",
+  "rotation": "Rotation",
+  "rotateFifteenDegreesLeft": "Rotate 15 degrees to the left",
+  "rotateFifteenDegreesRight": "Rotate 15 degrees to the right",
+  "finishEditing": "Finish editing",
+  "preciseAdjustment": "Precise adjustment",
+  "preciseAdjustmentExplanation": "Enter the exact horizontal movement, vertical movement, and rotation for the selected group.",
+  "horizontalAdjustment": "Horizontal movement",
+  "verticalAdjustment": "Vertical movement",
+  "rotationDegrees": "Rotation in degrees",
+  "applyAdjustment": "Apply adjustment",
+  "invalidPreciseAdjustment": "Enter at least one valid non-zero value.",
+  "preciseAdjustmentApplied": "The precise adjustment was applied successfully.",
+  "undoLastTransform": "Undo last adjustment",
+  "redoLastTransform": "Redo last adjustment",
+  "alignNearestWall": "Align with the nearest wall",
+  "alignmentPreviewTitle": "Alignment preview",
+  "alignmentPreviewMessage": "Review the current position and the proposed position before applying the adjustment.",
+  "alignmentCurrentPosition": "Current position",
+  "alignmentProposedPosition": "Proposed position",
+  "applyAlignment": "Apply alignment",
+  "alignmentPreviewExpired": "The floor plan changed after the preview was generated. Create a new alignment preview.",
+  "wallAlignedSuccessfully": "The walls were aligned successfully.",
+  "joinRooms": "Join spaces",
+  "roomToJoin": "Destination space",
+  "joinPreviewTitle": "Join preview",
+  "joinPreviewMessage": "{source} will be moved to join it with {target}. The application will reject the operation if it causes overlaps.",
+  "@joinPreviewMessage": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "applyJoin": "Apply join",
+  "joinCompleted": "The spaces were joined successfully.",
+  "joinOverlapPrevented": "The join was cancelled because it would cause an overlap.",
+  "noIndependentRoomAvailable": "There is no other independent space available to join.",
+  "noSafeNearbyWall": "No nearby parallel wall could be aligned safely.",
+  "sharedWall": "Shared wall",
+  "partialSharedWall": "Shared wall segment",
+  "roomAdjustedAutomatically": "The room was adjusted successfully.",
+  "unsafeMovementRejected": "The movement was cancelled because it would cause an overlap.",
+  "unsafeRotationRejected": "The rotation was cancelled because it would cause an overlap.",
+  "selectedDoor": "Selected door",
+  "selectedWindow": "Selected window",
+  "openingConnectedStatus": "Connected",
+  "openingAvailableStatus": "Available",
+  "openingStartAtMarkedPoint": "Starts at the marked point",
+  "continueScanFromHere": "Continue scanning from here",
+  "selectedDoorUnavailable": "The selected door is no longer available.",
+  "selectedOpeningUnavailable": "The selected opening is no longer available.",
+  "openingWallNotFound": "The opening wall could not be identified.",
+  "continuationDirectionTitle": "Which way does the floor plan continue?",
+  "continuationDirectionExplanation": "The green point marks where the new space will begin. Choose the arrow pointing toward the space you are going to scan.",
+  "continueToward": "Continue toward {direction}",
+  "@continueToward": {
+    "placeholders": {
+      "direction": {
+        "type": "String"
+      }
+    }
+  },
+  "directionRight": "the right",
+  "directionLeft": "the left",
+  "directionDown": "down",
+  "directionUp": "up",
+  "notEnoughRoomsToOrganize": "There are not enough spaces to organize.",
+  "organizeRooms": "Organize spaces",
+  "organizeRoomsExplanation": "Only independent groups will be arranged. Spaces connected by openings or shared walls move together, preserving alignment, measurements, doors, and windows.\n\nThe first group stays fixed. An already assembled plan will not change. You can undo the arrangement.",
+  "roomsOrganizedSuccessfully": "Spaces organized successfully.",
+  "floorPlan2D": "Overall 2D floor plan",
+  "editMeasurements": "Edit measurements",
+  "moreOptions": "More options",
+  "importPlan": "Import floor plan",
+  "importProject": "Import JSON or SVG",
+  "exportProject": "Export file",
+  "exportJson": "JSON — complete project backup",
+  "exportSvg": "SVG — editable vector floor plan",
+  "exportPng": "PNG — sharp floor plan image",
+  "exportJpg": "JPG — compact floor plan image",
+  "exportDestination": "What would you like to do with the file?",
+  "saveToFiles": "Save to Files…",
+  "shareFile": "Share…",
+  "replaceProjectTitle": "Replace the open project",
+  "replaceProjectMessage": "The file is valid. If you continue, it will replace the open floor plan. Files saved outside ARchScan will not be deleted.",
+  "shareJson": "Save JSON to Files",
+  "exportPdf": "Save PDF to Files",
+  "registeredRooms": "Registered spaces",
+  "tapRoomToAddOpening": "Tap inside a space to add a door or window.",
+  "roomCount": "{count, plural, =1{1 space} other{{count} spaces}}",
+  "@roomCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "planImportedSuccessfully": "Floor plan imported successfully.",
+  "planImportCancelledOrInvalid": "Import cancelled or invalid.",
+  "addElement": "Add element",
+  "selectElementToAdd": "Select the element you want to add.",
+  "noRoomsYet": "There are no spaces yet.",
+  "renameRoom": "Rename space",
+  "roomNameShortLabel": "Name",
+  "roomNameMainBedroomExample": "Example: Main bedroom",
+  "noScannedRooms": "There are no scanned spaces",
+  "completeScanToViewPlan": "Complete a scan to view the overall floor plan.",
+  "close": "Close",
+  "roomSummary": "{area} · {perimeter} perimeter · {cornerCount, plural, =1{1 corner} other{{cornerCount} corners}}",
+  "@roomSummary": {
+    "placeholders": {
+      "area": {
+        "type": "String"
+      },
+      "perimeter": {
+        "type": "String"
+      },
+      "cornerCount": {
+        "type": "int"
+      }
+    }
+  },
+  "actions": "Actions",
+  "rename": "Rename",
+  "completeAllFields": "Please complete all fields.",
+  "newProject": "New project",
+  "projectNameExample": "E.g. Office renovation",
+  "create": "Create",
+  "myProjects": "My projects",
+  "localProjectsStoredOnDevice": "Projects stored only on this device",
+  "newScan": "New scan",
+  "noSavedProjects": "You have no saved projects",
+  "pressNewScanToStart": "Press “New scan” to begin",
+  "projectUpdated": "Updated: {date}",
+  "@projectUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "viewFloorPlan": "View floor plan",
+  "delete": "Delete",
+  "permissionsRequired": "Permissions required",
+  "cameraLocationPermissionsDenied": "Camera permission was not granted. Enable it in system settings to scan.",
+  "scannerUnavailable": "Scanner unavailable",
+  "basicScannerInitializationFailed": "The camera is available, but the Basic Scanner could not be initialized.",
+  "deviceCameraUnavailable": "This device does not have a camera available for scanning.",
+  "understood": "Understood",
+  "arTrackingActive": "Augmented reality active",
+  "arCalibrating": "Calibrating",
+  "markOpeningEndpointA": "Mark endpoint A",
+  "markOpeningEndpointB": "Mark endpoint B",
+  "pointOpeningEndpointAInstruction": "Aim at endpoint A of the opening and mark the reference.",
+  "pointOpeningEndpointBInstruction": "Now aim at endpoint B of the same opening.",
+  "openingReferenceAlignedInstruction": "Reference aligned. You can now measure the new space.",
+  "invalidOpeningReferencePoint": "No valid point was detected. Aim at the opening and try again.",
+  "openingReferenceEndpointsTooClose": "The endpoints are too close. Mark endpoint B again.",
+  "openingReferenceDifference": "Reference aligned. Warning: the augmented reality measurement differs from the plan by {difference}.",
+  "openingReferenceAligned": "Reference aligned correctly.",
+  "invalidCameraPosition": "No valid camera position was detected. Aim at a recognized surface and try again.",
+  "needTwoCornersBeforeOpening": "Mark at least 2 corners before measuring an opening.",
+  "featureStartRegistered": "Start of {feature} registered. Move the camera to the other endpoint and press again.",
+  "openingMeasurementFailed": "The opening could not be measured.",
+  "featureSaved": "{feature} saved. {warning}",
+  "referenceOpeningMissing": "The reference opening no longer exists.",
+  "closeRoomFailed": "The space could not be closed. Review the traced points.",
+  "connectOpeningFailed": "The space could not be connected to the selected opening.",
+  "@openingReferenceDifference": {
+    "placeholders": {
+      "difference": {
+        "type": "String"
+      }
+    }
+  },
+  "@featureStartRegistered": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "@featureSaved": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      },
+      "warning": {
+        "type": "String"
+      }
+    }
+  },
+  "initializingApplication": "Starting ARchScan…",
+  "applicationInitializationFailed": "The application could not start",
+  "applicationInitializationFailedDetails": "Check your connection and try again. Your saved projects remain protected.",
+  "retryApplicationStart": "Retry startup",
+  "arInitializationFailedTitle": "AR could not start",
+  "arInitializationFailedMessage": "The augmented reality session did not respond in time. You can retry or continue with the basic scanner using the camera.",
+  "retryArScanner": "Retry augmented reality",
+  "useBasicScanner": "Continue with the basic scanner",
+  "privacyAndAccount": "Privacy and data",
+  "privacyAndData": "Privacy and data",
+  "privacyOverview": "Privacy overview",
+  "privacyOverviewLocalDescription": "ARchScan works without an account and keeps your projects on the device. It does not synchronize surveys with external servers.",
+  "localDataTitle": "Data stored on the device",
+  "localDataDescription": "Projects, interrupted scans, and preferences are stored locally so the application can work without a connection.",
+  "localOnlyDataDescription": "Projects, room names, geometry, measurements, and preferences remain in ARchScan's private storage on this device.",
+  "cameraAndSensorsTitle": "Camera and sensors",
+  "cameraAndSensorsDescription": "The camera and sensors are used while you measure. ARchScan does not store or transmit photographs, videos, geographic location, or raw sensor readings.",
+  "exportsAndSharingTitle": "Exports and files",
+  "exportsAndSharingDescription": "JSON and PDF files are created or shared only when you choose an export or import action.",
+  "trackingTitle": "Tracking and advertising",
+  "trackingDescription": "ARchScan contains no advertising, creates no advertising profiles, and does not track you across applications or websites.",
+  "deleteLocalDataTitle": "Delete projects from this device",
+  "deleteLocalDataDescription": "Permanently deletes all projects stored by ARchScan on this device. Exported JSON and PDF files are not modified.",
+  "deleteAllLocalData": "Delete all local projects",
+  "deleteLocalDataConfirmationTitle": "Delete all local projects?",
+  "deleteLocalDataConfirmationMessage": "This action will permanently delete the projects stored by ARchScan on this device and cannot be undone. Exported JSON, PDF, or DXF files will remain where you saved them.",
+  "deleteLocalDataPermanently": "Delete permanently",
+  "deletingLocalData": "Deleting projects…",
+  "localDataDeleted": "Local projects were deleted successfully.",
+  "cameraPermissionDenied": "Camera permission was not granted. Enable it in system settings to scan.",
+  "planImportInvalid": "The file does not contain a compatible project, and no changes were made.",
+  "openingHeightPositive": "Enter a height greater than zero.",
+  "windowSillHeight": "Window sill height",
+  "openingSillNonNegative": "Enter a sill height of zero or greater.",
+  "moveOpeningOnWall": "Move along a wall",
+  "roomsArrangementUnchanged": "The floor plan layout was not changed.",
+  "exportDxf": "Save 2D DXF to Files (feet and inches)",
+  "dxfExportFailed": "The DXF file could not be exported. Your project was not changed.",
+  "fileSaveFailed": "The file could not be saved outside ARchScan. Your project was not changed.",
+  "planTapWall": "Tap a wall to place the opening.",
+  "planSelectWall": "Tap a wall or a corner to edit it on the plan.",
+  "planChooseRoom": "This wall belongs to multiple rooms. Choose which one to edit.",
+  "planConnectionBlocked": "This change would displace a connected opening. Move the room group or remove the connection first.",
+  "planOverlapBlocked": "This change overlaps another room. The previous plan was preserved.",
+  "planNoClosure": "No valid nearby closure with a complete wall path was found. Move the endpoint and try again.",
+  "planStaleEdit": "The plan changed during editing. Select the wall again.",
+  "planInvalidGeometry": "The change creates crossings, walls that are too short, or openings outside their wall. It was not applied.",
+  "planClosePreview": "Review the highlighted path: it connects to the nearest point or wall that allows closure without crossings or overlaps.",
+  "planDeletePreview": "The selected wall and its openings will be removed. The contour will stay open. An already open contour may split into separate paths. Neighbouring openings will remain, disconnected. You can undo this operation.",
+  "planMeasurePreview": "Review the highlighted wall and its openings before confirming the measurement.",
+  "planConfirm": "Confirm change",
+  "planCorner": "Corner",
+  "planDragSelection": "Drag the selection to move it. Tap another point to change the selection.",
+  "planDeleteWall": "Delete wall",
+  "planAddDoor": "Add door",
+  "planAddWindow": "Add window",
+  "planUndo": "Undo",
+  "planRedo": "Redo",
+  "planInvalidLength": "Enter a valid length of at least 0.05 meters. Inches must be between 0 and less than 12.",
+  "planLengthAnchor": "This wall's first corner stays fixed; the next corner is adjusted. You will see a preview before saving.",
+  "planPreview": "Preview on plan",
+  "planOpenContour": "Open contour",
+  "planDeleteRoom": "Delete room",
+  "planDeleteRoomConfirmation": "Delete “{roomName}” and all its walls and openings? Connections to other rooms will be removed, without deleting those rooms. You can undo this change during this session.",
+  "planRoomDeleted": "Room deleted. You can undo this change.",
+  "@planDeleteRoomConfirmation": {
+    "placeholders": {
+      "roomName": {
+        "type": "String"
+      }
+    }
+  },
+  "openingsAddedFromPlan": "Finish measuring the room, then add doors and windows by touching its walls in the plan.",
+  "markPreviousVertex": "Mark previous vertex",
+  "markStartVertex": "Mark starting vertex",
+  "pointPreviousVertexInstruction": "Aim at the previous contour vertex and confirm it.",
+  "pointStartVertexInstruction": "Aim at the vertex where you will continue and confirm it.",
+  "vertexReferenceAligned": "Room orientation aligned. You can continue scanning.",
+  "continueFromSelectedVertexTitle": "Continue from this vertex?",
+  "continueFromSelectedVertexBody": "The highlighted vertex will be the start. In AR you will first mark the previous vertex and then this point to preserve the wall orientation.",
+  "areaSummaryTitle": "Project areas",
+  "totalAreaLabel": "Total area"
+}

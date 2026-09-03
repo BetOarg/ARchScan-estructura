@@ -1,0 +1,4 @@
+storeFile=../upload-keystore.jks
+storePassword=REEMPLAZAR_LOCALMENTE
+keyAlias=archscan-upload
+keyPassword=REEMPLAZAR_LOCALMENTE

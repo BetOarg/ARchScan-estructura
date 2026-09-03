@@ -1,0 +1,214 @@
+name: ARchScan - CI Build Check
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: "3.47.0"
+  JAVA_VERSION: "17"
+
+permissions:
+  contents: read
+
+jobs:
+  release-readiness:
+    name: Verify Store Readiness Structure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: "stable"
+          cache: true
+
+      - name: Verify publication structure
+        run: dart run packages/room_scanner_app/tool/verify_store_readiness.dart --strict
+
+      - name: Audit secrets, permissions and local storage
+        run: dart run packages/room_scanner_app/tool/security_audit.dart
+
+  test-core:
+    name: room_scanner_core — analyze & test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: "stable"
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+        working-directory: packages/room_scanner_core
+
+      - name: Generate Isar / Build Runner code
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+        working-directory: packages/room_scanner_core
+
+      - name: Analyze code
+        run: flutter analyze --fatal-infos
+        working-directory: packages/room_scanner_core
+
+      - name: Run tests
+        run: flutter test
+        working-directory: packages/room_scanner_core
+
+  check-android:
+    name: Verify Code, Tests & Android
+    needs: test-core
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: Set up Android SDK 36
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android API 36
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Ensure stable Android debug key
+        shell: bash
+        run: |
+          mkdir -p ~/.android
+          if [ ! -f ~/.android/debug.keystore ]; then
+            keytool -genkeypair \
+              -keystore ~/.android/debug.keystore \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -dname "CN=Android Debug,O=Room Scanner,C=AR" \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000
+          fi
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: "stable"
+          cache: true
+
+      - name: Verify Flutter setup
+        run: |
+          flutter --version
+          flutter doctor -v
+
+      - name: Generate Isar / Build Runner code (room_scanner_core)
+        run: |
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
+        working-directory: packages/room_scanner_core
+
+      - name: Get dependencies (room_scanner_app)
+        run: flutter pub get
+        working-directory: packages/room_scanner_app
+
+      - name: Generate Flutter localizations
+        run: flutter gen-l10n
+        working-directory: packages/room_scanner_app
+
+      - name: Analyze code
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+        working-directory: packages/room_scanner_app
+
+      - name: Run tests
+        run: flutter test
+        working-directory: packages/room_scanner_app
+
+      - name: Verify Android Release App Bundle
+        working-directory: packages/room_scanner_app
+        run: |
+          flutter clean
+          flutter pub get
+          flutter gen-l10n
+          flutter build appbundle --release
+
+  check-ios:
+    name: Verify iOS Build
+    needs: test-core
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: "stable"
+          cache: true
+
+      - name: Generate Isar / Build Runner code (room_scanner_core)
+        run: |
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
+        working-directory: packages/room_scanner_core
+
+      - name: Get dependencies (room_scanner_app)
+        run: flutter pub get
+        working-directory: packages/room_scanner_app
+
+      - name: Generate Flutter localizations
+        run: flutter gen-l10n
+        working-directory: packages/room_scanner_app
+
+      - name: Verify iOS Configuration & Pods
+        working-directory: packages/room_scanner_app
+        shell: bash
+        run: |
+          set -o pipefail
+
+          flutter clean
+          flutter pub get
+          flutter gen-l10n
+
+          max_attempts=5
+
+          for attempt in $(seq 1 "$max_attempts"); do
+            echo "iOS configuration attempt $attempt of $max_attempts"
+
+            if flutter build ios --no-codesign --release \
+                2>&1 | tee ios_configuration.log; then
+              exit 0
+            fi
+
+            if ! grep -Eiq \
+              'HTTP[^0-9]*429|Response: 429|rate.?limit|CDN:.*couldn.t be downloaded|timed out|Could not connect|Connection reset' \
+              ios_configuration.log; then
+              echo "Non-transient CocoaPods or iOS configuration error."
+              exit 1
+            fi
+
+            if [ "$attempt" -eq "$max_attempts" ]; then
+              echo "CocoaPods remained unavailable after $max_attempts attempts."
+              exit 1
+            fi
+
+            wait_seconds=$((attempt * 30))
+            echo "Transient CocoaPods error. Retrying in $wait_seconds seconds."
+            sleep "$wait_seconds"
+          done

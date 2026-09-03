@@ -1,0 +1,527 @@
+{
+  "undoScanEdit": "Deshacer última acción",
+  "redoScanEdit": "Rehacer última acción",
+  "placeOpeningByTouch": "Ubicar abertura en el plano",
+  "touchOpeningInstructions": "Tocá una pared y deslizá la abertura hasta su posición. También podés elegir la pared de cierre. Ajustá el ancho y confirmá.",
+  "deleteOpening": "Eliminar abertura",
+  "deleteOpeningConfirmation": "Se eliminará esta abertura. Si conecta dos ambientes, se quitará la conexión sin borrar las habitaciones.",
+  "@@locale": "es",
+  "appTitle": "ARchScan",
+  "newRoom": "Nuevo ambiente",
+  "roomName": "Nombre del ambiente",
+  "roomDestination": "Destino o nombre",
+  "cancel": "Cancelar",
+  "save": "Guardar",
+  "wall": "Pared",
+  "door": "Puerta",
+  "window": "Ventana",
+  "roomTypeLiving": "Living",
+  "roomTypeKitchen": "Cocina",
+  "roomTypeBathroom": "Baño",
+  "roomTypeBedroom": "Dormitorio",
+  "roomTypeLaundry": "Lavadero",
+  "roomTypeHallway": "Pasillo",
+  "roomTypeDiningRoom": "Comedor",
+  "roomTypeDailyDiningRoom": "Comedor diario",
+  "roomTypePatio": "Patio",
+  "roomTypeHall": "Hall",
+  "roomTypeBalcony": "Balcón",
+  "roomTypeTerrace": "Terraza",
+  "roomTypeGarage": "Cochera",
+  "roomTypePlayroom": "Playroom",
+  "roomTypeOther": "Otro espacio",
+  "roomType": "Tipo de ambiente",
+  "viewPlan": "Ver plano",
+  "editRoomName": "Editar nombre del ambiente",
+  "roomNameExample": "Ej.: Dormitorio de Ana",
+  "whatIsSpaceName": "¿Cómo se llama este espacio?",
+  "roomSuggestionOffice": "Oficina",
+  "roomSuggestionStorage": "Depósito",
+  "spaceSaved": "Espacio guardado",
+  "whatWouldYouLikeToDo": "¿Qué querés hacer ahora? Para continuar desde otro ambiente, seleccioná una puerta o ventana en el plano.",
+  "addAnotherSpace": "Agregar otro espacio",
+  "viewFullPlan": "Ver plano completo",
+  "chooseOpeningToContinue": "Elegí una puerta o ventana para continuar",
+  "noAvailableOpenings": "No hay aberturas disponibles.",
+  "openingAlreadyConnected": "Esta abertura ya conecta dos ambientes.",
+  "unfinishedScan": "Escaneo sin terminar",
+  "unfinishedScanFound": "Encontramos un escaneo que no se terminó.",
+  "continueScan": "Continuar escaneo",
+  "discardScan": "Descartar",
+  "markStartRecommendation": "Marcá el inicio",
+  "addNextCornerRecommendation": "Agregá la próxima esquina",
+  "closeSpaceRecommendation": "Ya podés cerrar el espacio",
+  "calculating": "CALCULANDO...",
+  "markStart": "MARCAR INICIO",
+  "measureNextCorner": "MEDIR SIGUIENTE ESQUINA",
+  "placeDoor": "UBICAR PUERTA",
+  "placeWindow": "UBICAR VENTANA",
+  "addCorner": "AÑADIR ESQUINA",
+  "markSecondEnd": "MARCAR SEGUNDO EXTREMO",
+  "measureDoor": "MEDIR PUERTA",
+  "measureWindow": "MEDIR VENTANA",
+  "preparingCamera": "Preparando cámara...",
+  "basicScanner": "Escáner básico",
+  "cameraStartFailed": "No se pudo iniciar la cámara",
+  "unknownError": "Error desconocido.",
+  "retryCamera": "Reintentar cámara",
+  "cameraPermissionRequired": "El permiso de cámara es necesario para utilizar el Escáner básico.",
+  "cameraUnavailable": "El dispositivo no tiene una cámara disponible.",
+  "cameraTimeoutMessage": "La cámara tardó demasiado en responder. Podés intentar iniciarla nuevamente.",
+  "closeRoom": "Cerrar ambiente",
+  "diagonalClosureDetectedTitle": "Cierre diagonal detectado",
+  "diagonalClosureDetectedMessage": "El cierre directo formaría una diagonal. La aplicación puede agregar la esquina ortogonal faltante y cerrar contra la primera esquina real del ambiente.",
+  "addCornerAndClose": "Agregar esquina y cerrar",
+  "smartCloseMessage": "La medición termina a {distance} metros del punto inicial. ¿Querés ajustar el cierre exactamente al inicio?",
+  "@smartCloseMessage": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "continueMeasuring": "Continuar midiendo",
+  "cameraResumeFailed": "No se pudo reanudar la cámara: {error}",
+  "@cameraResumeFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "continuationFromOpening": "Continuación desde una abertura",
+  "continuationFirstCornerInstruction": "Desde el punto verde, medí la distancia hasta la primera esquina real del ambiente.",
+  "markRoomStartingPoint": "Marcá el punto inicial de la habitación.",
+  "measureNextCornerInstruction": "Medí la distancia hasta la próxima esquina y elegí su dirección.",
+  "traceStarted": "Inicio del trazado",
+  "cornerRegistered": "Esquina {count} registrada",
+  "@cornerRegistered": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "needThreeCornersToClose": "Necesitás al menos 3 esquinas para cerrar.",
+  "canContinueOrClose": "Podés seguir agregando esquinas o cerrar.",
+  "lastCornerRemoved": "Última esquina eliminada.",
+  "measureFirstCorner": "Medir primera esquina",
+  "measureFirstCornerBeforeFeatures": "Primero medí la primera esquina real del ambiente.",
+  "couldNotAddStart": "No se pudo agregar el inicio.",
+  "startMarked": "Inicio marcado. Ahora medí la primera pared.",
+  "couldNotCalculateCorner": "No se pudo calcular la nueva esquina.",
+  "invalidCorner": "La esquina no es válida.",
+  "firstCornerRegistered": "Primera esquina registrada. Continuá midiendo las paredes del ambiente.",
+  "measurementRegistrationFailed": "No se pudo registrar la medición: {error}",
+  "@measurementRegistrationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotCalculateLocation": "No se pudo calcular la ubicación.",
+  "enterOpeningWidth": "Ingresá el ancho de la abertura.",
+  "couldNotAttachOpening": "No se pudo asociar la abertura a una pared.",
+  "doorAdjustedToWall": "Puerta de {width} metros ajustada a la pared.",
+  "@doorAdjustedToWall": {
+    "placeholders": {
+      "width": {
+        "type": "String"
+      }
+    }
+  },
+  "windowAdjustedToWall": "Ventana de {width} metros ajustada a la pared.",
+  "@windowAdjustedToWall": {
+    "placeholders": {
+      "width": {
+        "type": "String"
+      }
+    }
+  },
+  "locationRegistrationFailed": "No se pudo registrar la ubicación: {error}",
+  "@locationRegistrationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "openingWallQuestion": "¿En qué pared está la abertura?",
+  "openingWallExplanation": "Elegí la pared de cierre si la puerta o ventana está sobre el tramo que une la última esquina con la primera.",
+  "detectWallAutomatically": "Detectar pared automáticamente",
+  "useClosingWall": "Usar pared de cierre",
+  "placeElement": "Ubicar elemento",
+  "measureCorner": "Medir esquina",
+  "featureDistanceInstruction": "Indicá cuánto hay desde la última posición hasta la puerta o ventana.",
+  "cornerDistanceInstruction": "Indicá cuánto hay desde la última esquina hasta la nueva esquina.",
+  "manualFirstWallInstruction": "Este dispositivo no es compatible con ARCore. Ingresá manualmente la distancia desde la esquina inicial hasta la nueva.",
+  "manualNextWallInstruction": "Este dispositivo no es compatible con ARCore. Ingresá manualmente la distancia desde la última esquina hasta la nueva.",
+  "distance": "Distancia",
+  "distanceExample": "Ejemplo: 3,50",
+  "meters": "metros",
+  "enterPositiveDistance": "Ingresá una distancia mayor a 0",
+  "direction": "Dirección",
+  "directionExample": "Ejemplo: 90",
+  "degrees": "grados",
+  "enterValidDirection": "Ingresá una dirección válida",
+  "doorWidth": "Ancho de la puerta",
+  "windowWidth": "Ancho de la ventana",
+  "widthExample": "Ejemplo: 1,20",
+  "enterMinimumOpeningWidth": "Ingresá un ancho mínimo de 0,20 metros",
+  "quickDirection": "Dirección rápida:",
+  "front": "Frente",
+  "right": "Derecha",
+  "back": "Atrás",
+  "left": "Izquierda",
+  "featureDoesNotCreateCorner": "Esto no crea una esquina nueva del ambiente.",
+  "positionValidatedBeforeAdding": "La nueva posición se valida antes de incorporarla al plano.",
+  "useMeasurement": "Usar medición",
+  "measurementSystem": "Sistema de medición",
+  "metricSystem": "Metros",
+  "imperialSystem": "Pies y pulgadas",
+  "feet": "Pies",
+  "inches": "Pulgadas",
+  "squareMeters": "metros cuadrados",
+  "squareFeet": "pies cuadrados",
+  "changeDoorHingeSide": "Cambiar lado de la bisagra",
+  "changeDoorOpeningDirection": "Cambiar sentido de apertura",
+  "chooseDoorOpeningDirection": "Elegir apertura de la puerta",
+  "doorOpensInterior": "Abrir hacia el interior",
+  "doorOpensExterior": "Abrir hacia el exterior",
+  "editOpeningDimensions": "Editar medidas y posición",
+  "openingWidth": "Ancho de la abertura",
+  "distanceFromWallStart": "Distancia desde la esquina inicial de la pared",
+  "wallLength": "Longitud de la pared",
+  "invalidOpeningMeasurement": "Ingresá medidas válidas para el ancho y la posición.",
+  "openingUpdated": "Abertura actualizada correctamente.",
+  "openingHeight": "Altura de la abertura",
+  "sillHeight": "Altura desde el piso",
+  "horizontalOrientation": "Horizontal",
+  "verticalOrientation": "Vertical",
+  "doorPlanDimensions": "{width} de ancho · {height} de alto",
+  "@doorPlanDimensions": {
+    "placeholders": {
+      "width": {
+        "type": "String"
+      },
+      "height": {
+        "type": "String"
+      }
+    }
+  },
+  "windowPlanDimensions": "{width} de ancho · {height} de alto\n{sill} desde el piso · {orientation}",
+  "@windowPlanDimensions": {
+    "placeholders": {
+      "width": {
+        "type": "String"
+      },
+      "height": {
+        "type": "String"
+      },
+      "sill": {
+        "type": "String"
+      },
+      "orientation": {
+        "type": "String"
+      }
+    }
+  },
+  "noRoomsToEdit": "No hay ambientes para editar.",
+  "transformRoomsTitle": "Mover y rotar ambientes",
+  "touchTransformRooms": "Mover ambientes con gestos",
+  "touchTransformExplanation": "Tocá un ambiente, arrastrá con un dedo y girá con dos. Al soltar, la abertura se ajustará si está cerca.",
+  "connectedGroupTransformHint": "Si el ambiente está conectado mediante una abertura, todo el grupo se moverá o rotará como una sola unidad.",
+  "selectedRoom": "Ambiente seleccionado",
+  "movementDistance": "Distancia de cada movimiento",
+  "fiveCentimeters": "5 centímetros",
+  "tenCentimeters": "10 centímetros",
+  "twentyFiveCentimeters": "25 centímetros",
+  "fiftyCentimeters": "50 centímetros",
+  "oneInch": "1 pulgada",
+  "threeInches": "3 pulgadas",
+  "sixInches": "6 pulgadas",
+  "oneFoot": "1 pie",
+  "movement": "Movimiento",
+  "moveUp": "Mover hacia arriba",
+  "moveDown": "Mover hacia abajo",
+  "moveLeft": "Mover hacia la izquierda",
+  "moveRight": "Mover hacia la derecha",
+  "rotation": "Rotación",
+  "rotateFifteenDegreesLeft": "Girar 15 grados a la izquierda",
+  "rotateFifteenDegreesRight": "Girar 15 grados a la derecha",
+  "finishEditing": "Finalizar edición",
+  "preciseAdjustment": "Ajuste preciso",
+  "preciseAdjustmentExplanation": "Ingresá el desplazamiento horizontal, el desplazamiento vertical y el giro exacto del grupo seleccionado.",
+  "horizontalAdjustment": "Desplazamiento horizontal",
+  "verticalAdjustment": "Desplazamiento vertical",
+  "rotationDegrees": "Giro en grados",
+  "applyAdjustment": "Aplicar ajuste",
+  "invalidPreciseAdjustment": "Ingresá al menos un valor válido distinto de cero.",
+  "preciseAdjustmentApplied": "El ajuste preciso se aplicó correctamente.",
+  "undoLastTransform": "Deshacer último ajuste",
+  "redoLastTransform": "Rehacer último ajuste",
+  "alignNearestWall": "Alinear con la pared más cercana",
+  "alignmentPreviewTitle": "Vista previa de alineación",
+  "alignmentPreviewMessage": "Revisá la posición actual y la posición propuesta antes de aplicar el ajuste.",
+  "alignmentCurrentPosition": "Posición actual",
+  "alignmentProposedPosition": "Posición propuesta",
+  "applyAlignment": "Aplicar alineación",
+  "alignmentPreviewExpired": "El plano cambió después de generar la vista previa. Generá una nueva alineación.",
+  "wallAlignedSuccessfully": "Las paredes se alinearon correctamente.",
+  "joinRooms": "Unir ambientes",
+  "roomToJoin": "Ambiente de destino",
+  "joinPreviewTitle": "Vista previa de la unión",
+  "joinPreviewMessage": "Se moverá {source} para unirlo con {target}. La aplicación rechazará la operación si produce solapamientos.",
+  "@joinPreviewMessage": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "applyJoin": "Aplicar unión",
+  "joinCompleted": "Los ambientes se unieron correctamente.",
+  "joinOverlapPrevented": "La unión fue cancelada porque produciría un solapamiento.",
+  "noIndependentRoomAvailable": "No hay otro ambiente independiente disponible para unir.",
+  "noSafeNearbyWall": "No se encontró una pared cercana y paralela que pueda alinearse de forma segura.",
+  "sharedWall": "Pared compartida",
+  "partialSharedWall": "Tramo de pared compartida",
+  "roomAdjustedAutomatically": "La habitación se ajustó correctamente.",
+  "unsafeMovementRejected": "El movimiento fue cancelado porque produciría un solapamiento.",
+  "unsafeRotationRejected": "La rotación fue cancelada porque produciría un solapamiento.",
+  "selectedDoor": "Puerta seleccionada",
+  "selectedWindow": "Ventana seleccionada",
+  "openingConnectedStatus": "Conectada",
+  "openingAvailableStatus": "Disponible",
+  "openingStartAtMarkedPoint": "Inicio en el punto marcado",
+  "continueScanFromHere": "Continuar escaneo desde aquí",
+  "selectedDoorUnavailable": "La puerta seleccionada ya no está disponible.",
+  "selectedOpeningUnavailable": "La abertura seleccionada ya no está disponible.",
+  "openingWallNotFound": "No se pudo identificar la pared de la abertura.",
+  "continuationDirectionTitle": "¿Hacia dónde continúa el plano?",
+  "continuationDirectionExplanation": "El punto verde marca dónde comenzará el nuevo ambiente. Elegí la flecha que apunta hacia el ambiente que vas a escanear.",
+  "continueToward": "Continuar hacia {direction}",
+  "@continueToward": {
+    "placeholders": {
+      "direction": {
+        "type": "String"
+      }
+    }
+  },
+  "directionRight": "la derecha",
+  "directionLeft": "la izquierda",
+  "directionDown": "abajo",
+  "directionUp": "arriba",
+  "notEnoughRoomsToOrganize": "No hay suficientes ambientes para organizar.",
+  "organizeRooms": "Organizar ambientes",
+  "organizeRoomsExplanation": "Se distribuirán solamente los grupos independientes. Los ambientes conectados o que compartan una pared se moverán juntos, conservando su alineación, medidas, puertas y ventanas.\n\nEl primer grupo queda fijo. Si todo el plano ya está unido, no se modificará. Podés deshacer la organización.",
+  "roomsOrganizedSuccessfully": "Ambientes organizados correctamente.",
+  "floorPlan2D": "Plano general 2D",
+  "editMeasurements": "Editar medidas",
+  "moreOptions": "Más opciones",
+  "importPlan": "Importar plano",
+  "importProject": "Importar JSON o SVG",
+  "exportProject": "Exportar archivo",
+  "exportJson": "JSON — copia completa del proyecto",
+  "exportSvg": "SVG — plano vectorial editable",
+  "exportPng": "PNG — imagen nítida del plano",
+  "exportJpg": "JPG — imagen liviana del plano",
+  "exportDestination": "¿Qué querés hacer con el archivo?",
+  "saveToFiles": "Guardar en Archivos…",
+  "shareFile": "Compartir…",
+  "replaceProjectTitle": "Reemplazar el proyecto abierto",
+  "replaceProjectMessage": "El archivo es válido. Si continuás, reemplazará el plano abierto. Los archivos guardados fuera de ARchScan no se eliminarán.",
+  "shareJson": "Guardar JSON en Archivos",
+  "exportPdf": "Guardar PDF en Archivos",
+  "registeredRooms": "Ambientes registrados",
+  "tapRoomToAddOpening": "Tocá dentro de un ambiente para añadir una puerta o ventana.",
+  "roomCount": "{count, plural, =1{1 ambiente} other{{count} ambientes}}",
+  "@roomCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "planImportedSuccessfully": "Plano importado correctamente.",
+  "planImportCancelledOrInvalid": "Importación cancelada o no válida.",
+  "addElement": "Agregar elemento",
+  "selectElementToAdd": "Seleccioná el elemento que querés incorporar.",
+  "noRoomsYet": "No hay ambientes aún.",
+  "renameRoom": "Renombrar ambiente",
+  "roomNameShortLabel": "Nombre",
+  "roomNameMainBedroomExample": "Ej. Dormitorio principal",
+  "noScannedRooms": "No hay ambientes escaneados",
+  "completeScanToViewPlan": "Completá un escaneo para visualizar el plano general.",
+  "close": "Cerrar",
+  "roomSummary": "{area} · {perimeter} de perímetro · {cornerCount, plural, =1{1 esquina} other{{cornerCount} esquinas}}",
+  "@roomSummary": {
+    "placeholders": {
+      "area": {
+        "type": "String"
+      },
+      "perimeter": {
+        "type": "String"
+      },
+      "cornerCount": {
+        "type": "int"
+      }
+    }
+  },
+  "actions": "Acciones",
+  "rename": "Renombrar",
+  "completeAllFields": "Por favor, completá todos los campos.",
+  "newProject": "Nuevo proyecto",
+  "projectNameExample": "Ej. Remodelación de oficina",
+  "create": "Crear",
+  "myProjects": "Mis proyectos",
+  "localProjectsStoredOnDevice": "Proyectos guardados únicamente en este dispositivo",
+  "newScan": "Nuevo escaneo",
+  "noSavedProjects": "No tenés proyectos guardados",
+  "pressNewScanToStart": "Presioná «Nuevo escaneo» para comenzar",
+  "projectUpdated": "Actualizado: {date}",
+  "@projectUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "viewFloorPlan": "Ver plano",
+  "delete": "Eliminar",
+  "permissionsRequired": "Permisos requeridos",
+  "cameraLocationPermissionsDenied": "No se otorgó el permiso de cámara. Habilitalo desde los ajustes del sistema para poder escanear.",
+  "scannerUnavailable": "Escáner no disponible",
+  "basicScannerInitializationFailed": "La cámara está disponible, pero no fue posible iniciar el escáner básico.",
+  "deviceCameraUnavailable": "Este dispositivo no tiene una cámara disponible para realizar el escaneo.",
+  "understood": "Entendido",
+  "arTrackingActive": "Realidad aumentada activa",
+  "arCalibrating": "Calibrando",
+  "markOpeningEndpointA": "Marcar extremo A",
+  "markOpeningEndpointB": "Marcar extremo B",
+  "pointOpeningEndpointAInstruction": "Apuntá al extremo A de la abertura y marcá la referencia.",
+  "pointOpeningEndpointBInstruction": "Ahora apuntá al extremo B de la misma abertura.",
+  "openingReferenceAlignedInstruction": "Referencia alineada. Ya podés medir el ambiente nuevo.",
+  "invalidOpeningReferencePoint": "No se detectó un punto válido. Apuntá a la abertura e intentá nuevamente.",
+  "openingReferenceEndpointsTooClose": "Los extremos están demasiado cerca. Volvé a marcar el extremo B.",
+  "openingReferenceDifference": "Referencia alineada. Atención: la medida de realidad aumentada difiere {difference} del plano.",
+  "openingReferenceAligned": "Referencia alineada correctamente.",
+  "invalidCameraPosition": "No se detectó una posición de cámara válida. Apuntá a una superficie reconocida e intentá nuevamente.",
+  "needTwoCornersBeforeOpening": "Necesitás marcar al menos 2 esquinas antes de medir una abertura.",
+  "featureStartRegistered": "Inicio de {feature} registrado. Ubicá la cámara en el otro extremo y volvé a pulsar.",
+  "openingMeasurementFailed": "No se pudo medir la abertura.",
+  "featureSaved": "{feature} guardada. {warning}",
+  "referenceOpeningMissing": "La abertura de referencia ya no existe.",
+  "closeRoomFailed": "No se pudo cerrar el ambiente. Revisá los puntos trazados.",
+  "connectOpeningFailed": "No se pudo conectar el ambiente con la abertura seleccionada.",
+  "@openingReferenceDifference": {
+    "placeholders": {
+      "difference": {
+        "type": "String"
+      }
+    }
+  },
+  "@featureStartRegistered": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "@featureSaved": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      },
+      "warning": {
+        "type": "String"
+      }
+    }
+  },
+  "initializingApplication": "Iniciando ARchScan…",
+  "applicationInitializationFailed": "No se pudo iniciar la aplicación",
+  "applicationInitializationFailedDetails": "Revisá la conexión e intentá nuevamente. Tus proyectos guardados permanecen protegidos.",
+  "retryApplicationStart": "Reintentar inicio",
+  "arInitializationFailedTitle": "No se pudo iniciar la realidad aumentada",
+  "arInitializationFailedMessage": "La sesión de realidad aumentada no respondió a tiempo. Podés reintentar o continuar con el escáner básico usando la cámara.",
+  "retryArScanner": "Reintentar realidad aumentada",
+  "useBasicScanner": "Continuar con el escáner básico",
+  "privacyAndAccount": "Privacidad y datos",
+  "privacyAndData": "Privacidad y datos",
+  "privacyOverview": "Resumen de privacidad",
+  "privacyOverviewLocalDescription": "ARchScan funciona sin cuenta y conserva tus proyectos dentro del dispositivo. No sincroniza relevamientos con servidores externos.",
+  "localDataTitle": "Datos guardados en el dispositivo",
+  "localDataDescription": "Los proyectos, escaneos interrumpidos y preferencias se guardan localmente para que la aplicación pueda funcionar sin conexión.",
+  "localOnlyDataDescription": "Los proyectos, nombres de ambientes, geometría, medidas y preferencias permanecen en el almacenamiento privado de ARchScan en este dispositivo.",
+  "cameraAndSensorsTitle": "Cámara y sensores",
+  "cameraAndSensorsDescription": "La cámara y los sensores se utilizan mientras medís. ARchScan no guarda ni envía fotografías, videos, ubicación geográfica ni lecturas sin procesar de sensores.",
+  "exportsAndSharingTitle": "Exportaciones y archivos",
+  "exportsAndSharingDescription": "Los archivos JSON y PDF se crean o comparten únicamente cuando elegís una acción de exportación o importación.",
+  "trackingTitle": "Seguimiento y publicidad",
+  "trackingDescription": "ARchScan no contiene publicidad, no crea perfiles publicitarios y no realiza seguimiento entre aplicaciones o sitios web.",
+  "deleteLocalDataTitle": "Eliminar los proyectos del dispositivo",
+  "deleteLocalDataDescription": "Elimina permanentemente todos los proyectos guardados por ARchScan en este dispositivo. Los JSON y PDF exportados no se modifican.",
+  "deleteAllLocalData": "Eliminar todos los proyectos locales",
+  "deleteLocalDataConfirmationTitle": "¿Eliminar todos los proyectos locales?",
+  "deleteLocalDataConfirmationMessage": "Esta acción eliminará permanentemente los proyectos guardados por ARchScan en este dispositivo y no se puede deshacer. Los archivos JSON, PDF o DXF exportados permanecerán donde los hayas guardado.",
+  "deleteLocalDataPermanently": "Eliminar definitivamente",
+  "deletingLocalData": "Eliminando proyectos…",
+  "localDataDeleted": "Los proyectos locales se eliminaron correctamente.",
+  "cameraPermissionDenied": "No se otorgó el permiso de cámara. Habilitalo desde los ajustes del sistema para poder escanear.",
+  "planImportInvalid": "El archivo no contiene un proyecto compatible y no se realizó ningún cambio.",
+  "openingHeightPositive": "Ingresá una altura mayor que cero.",
+  "windowSillHeight": "Altura del antepecho",
+  "openingSillNonNegative": "Ingresá una altura de antepecho igual o mayor que cero.",
+  "moveOpeningOnWall": "Mover sobre una pared",
+  "roomsArrangementUnchanged": "No se modificó la distribución del plano.",
+  "exportDxf": "Guardar DXF 2D en Archivos (metros)",
+  "dxfExportFailed": "No se pudo exportar el archivo DXF. Tu proyecto no se modificó.",
+  "fileSaveFailed": "No se pudo guardar el archivo fuera de ARchScan. Tu proyecto no se modificó.",
+  "planTapWall": "Tocá una pared para ubicar la abertura.",
+  "planSelectWall": "Tocá una pared o una esquina para editarla sobre el plano.",
+  "planChooseRoom": "Esta pared pertenece a varios ambientes. Elegí cuál editar.",
+  "planConnectionBlocked": "El cambio descalzaría una abertura conectada. Mové el grupo de ambientes o quitá la conexión primero.",
+  "planOverlapBlocked": "El cambio se superpone con otro ambiente. Se conservó el plano anterior.",
+  "planNoClosure": "No hay un cierre cercano válido con un recorrido de paredes completo. Mové el extremo y volvé a intentar.",
+  "planStaleEdit": "El plano cambió durante la edición. Seleccioná la pared nuevamente.",
+  "planInvalidGeometry": "El cambio genera cruces, paredes demasiado cortas o aberturas fuera de su pared. No se aplicó.",
+  "planClosePreview": "Revisá el recorrido resaltado: conecta con el punto o pared más cercanos que permiten cerrar sin cruces ni solapamientos.",
+  "planDeletePreview": "Se quitará la pared seleccionada y sus aberturas. El contorno quedará abierto. Si ya estaba abierto, puede dividirse en tramos separados. Las aberturas del vecino se conservarán desconectadas. Podés deshacer esta operación.",
+  "planMeasurePreview": "Revisá la pared resaltada y sus aberturas antes de confirmar la medida.",
+  "planConfirm": "Confirmar cambio",
+  "planCorner": "Esquina",
+  "planDragSelection": "Arrastrá la selección para moverla. Tocá otro punto para cambiar la selección.",
+  "planDeleteWall": "Eliminar pared",
+  "planAddDoor": "Agregar puerta",
+  "planAddWindow": "Agregar ventana",
+  "planUndo": "Deshacer",
+  "planRedo": "Rehacer",
+  "planInvalidLength": "Ingresá una medida válida mayor o igual a 0,05 metros. Las pulgadas deben estar entre 0 y menos de 12.",
+  "planLengthAnchor": "La primera esquina de esta pared queda fija; se ajusta la siguiente. Verás una vista previa antes de guardar.",
+  "planPreview": "Ver cambio en el plano",
+  "planOpenContour": "Contorno abierto",
+  "planDeleteRoom": "Eliminar ambiente",
+  "planDeleteRoomConfirmation": "¿Eliminar “{roomName}” y todas sus paredes y aberturas? Se quitarán sus conexiones con otros ambientes, sin borrar esos ambientes. Podés deshacer el cambio durante esta sesión.",
+  "planRoomDeleted": "Ambiente eliminado. Podés deshacer el cambio.",
+  "@planDeleteRoomConfirmation": {
+    "placeholders": {
+      "roomName": {
+        "type": "String"
+      }
+    }
+  },
+  "openingsAddedFromPlan": "Terminá de medir el ambiente y después agregá puertas y ventanas tocando sus paredes en el plano.",
+  "markPreviousVertex": "Marcar vértice anterior",
+  "markStartVertex": "Marcar vértice de inicio",
+  "pointPreviousVertexInstruction": "Apuntá al vértice anterior del contorno y confirmalo.",
+  "pointStartVertexInstruction": "Apuntá al vértice desde el que vas a continuar y confirmalo.",
+  "vertexReferenceAligned": "Orientación del ambiente alineada. Podés continuar el escaneo.",
+  "continueFromSelectedVertexTitle": "¿Continuar desde este vértice?",
+  "continueFromSelectedVertexBody": "El vértice resaltado será el inicio. En AR primero marcarás el vértice anterior y después este punto para conservar la orientación de la pared.",
+  "areaSummaryTitle": "Superficies del proyecto",
+  "totalAreaLabel": "Superficie total"
+}

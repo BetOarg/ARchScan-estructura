@@ -1,0 +1,152 @@
+name: ARchScan - Android Store Build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: "3.47.0"
+  JAVA_VERSION: "17"
+  ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+  ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+  ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+  ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+jobs:
+  build-android-store:
+    name: Signed Android App Bundle
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          missing=0
+          for variable in             ANDROID_KEYSTORE_BASE64             ANDROID_STORE_PASSWORD             ANDROID_KEY_ALIAS             ANDROID_KEY_PASSWORD; do
+            if [ -z "${!variable}" ]; then
+              echo "::error::Falta el secret $variable"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up Android SDK 36
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android API 36
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Generate core models
+        working-directory: packages/room_scanner_core
+        run: |
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: Prepare signing
+        working-directory: packages/room_scanner_app
+        shell: bash
+        run: |
+          printf '%s' "$ANDROID_KEYSTORE_BASE64"             | base64 --decode > android/upload-keystore.jks
+
+          {
+            echo "storeFile=../upload-keystore.jks"
+            echo "storePassword=$ANDROID_STORE_PASSWORD"
+            echo "keyAlias=$ANDROID_KEY_ALIAS"
+            echo "keyPassword=$ANDROID_KEY_PASSWORD"
+          } > android/key.properties
+
+      - name: Validate store readiness
+        working-directory: packages/room_scanner_app
+        run: |
+          dart run tool/verify_store_readiness.dart --strict
+          dart run tool/security_audit.dart
+          cd android
+          ./gradlew :app:verifyProductionSigning
+
+      - name: Build signed App Bundle
+        working-directory: packages/room_scanner_app
+        run: |
+          flutter pub get
+          flutter gen-l10n
+          flutter build appbundle --release
+
+      - name: Audit final App Bundle
+        working-directory: packages/room_scanner_app
+        shell: bash
+        run: |
+          set -euo pipefail
+          aab="build/app/outputs/bundle/release/app-release.aab"
+          report="build/store-audit"
+          mkdir -p "$report/native"
+
+          sha256sum "$aab" | tee "$report/SHA256SUMS.txt"
+          {
+            grep '^version:' pubspec.yaml
+            echo "applicationId=com.bet0.ARchScan"
+            echo "commit=${GITHUB_SHA}"
+          } | tee "$report/build-identity.txt"
+
+          manifest="$(find build/app/intermediates -path '*release*' -name AndroidManifest.xml -type f | head -n 1)"
+          if [ -z "$manifest" ]; then
+            echo "::error::No se encontró el manifiesto Android fusionado"
+            exit 1
+          fi
+          cp "$manifest" "$report/AndroidManifest.xml"
+          grep -o 'uses-permission[^>]*' "$manifest"             | sort -u > "$report/permissions.txt" || true
+
+          unzip -q "$aab" 'base/lib/*/*.so' -d "$report/native"
+          find "$report/native" -type f -name '*.so'             | sort > "$report/native-libraries.txt"
+
+          incompatible=0
+          : > "$report/page-alignment-16kb.txt"
+          while IFS= read -r library; do
+            relative="${library#"$report/native/"}"
+            alignments="$(readelf -lW "$library"               | awk '$1 == "LOAD" { print $NF }')"
+            printf '%s: %s\n' "$relative" "$alignments"               | tee -a "$report/page-alignment-16kb.txt"
+            for alignment in $alignments; do
+              if (( alignment < 0x4000 )); then
+                echo "::error::$relative usa alineación $alignment (< 0x4000)"
+                incompatible=1
+              fi
+            done
+          done < "$report/native-libraries.txt"
+
+          if [ "$incompatible" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Upload Android App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: archscan-android-store-${{ github.run_number }}
+          path: |
+            packages/room_scanner_app/build/app/outputs/bundle/release/app-release.aab
+            packages/room_scanner_app/build/store-audit
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Remove temporary credentials
+        if: always()
+        working-directory: packages/room_scanner_app
+        shell: bash
+        run: |
+          rm -f android/key.properties
+          rm -f android/upload-keystore.jks
